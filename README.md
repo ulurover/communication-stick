@@ -1,4 +1,5 @@
 This repo contains basic started code to use bluepill with VScode.
+STM32F103C8T6 is used as the microcontroller. Do not flash to anyother microcontroller without making neccessary changes in Makefile and c_cpp_properties.json.
 
 Needed libs below:
 

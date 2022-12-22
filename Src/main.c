@@ -23,6 +23,11 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdint.h>
+#include "usbd_cdc_if.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* USER CODE END Includes */
 
@@ -55,6 +60,11 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+uint8_t recieveBuffer[64];
+char messageTempBuffer[64];
+uint8_t message[64];
+// uint8_t *data = "Hello World from USB CDC\n";
 
 /* USER CODE END 0 */
 
@@ -99,8 +109,36 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-    // toggle GPIOA pin 4
-    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_9);
+    float rStart = 10.0;
+    float rGap = 10.0;
+    float random = (float)rand() / (float)(RAND_MAX / rGap) + rStart;
+    float temp = (float)rand() / (float)(RAND_MAX / rGap) + rStart;
+    float hum = (float)rand() / (float)(RAND_MAX / rGap) + rStart;
+
+    if (recieveBuffer[0] == '1')
+    {
+      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
+    }
+    else if (recieveBuffer[0] == '2')
+    {
+      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
+    }
+
+    snprintf(messageTempBuffer, sizeof messageTempBuffer, "#T: %.2f, H: %.2f, R: %.2f@", temp, hum, random);
+
+    for (int i = 0; messageTempBuffer[i] != '\0'; i++)
+    {
+      message[i] = (uint8_t)messageTempBuffer[i];
+    }
+
+    if (CDC_Transmit_FS(message, strlen((char *)message)) != USBD_OK)
+    {
+      // Handle error
+    }
+
+    // HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_9);
+    // uint8_t *data = "Hello World from USB CDC\n";
+    // CDC_Transmit_FS(data, strlen((char *)data));
 
     HAL_Delay(1000);
   }

@@ -2,6 +2,7 @@
   "files.associations": {
     "*.ejs": "html",
     ".env": "dotenv",
-    "usb_device.h": "c"
+    "usb_device.h": "c",
+    "stdlib.h": "c"
   }
 }
